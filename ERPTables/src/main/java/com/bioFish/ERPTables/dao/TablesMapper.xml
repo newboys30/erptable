@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bioFish.ERPTables.dao.mapper.TablesMapper">
+
+	<select id="findTableInfo" parameterType="string" resultType="map">
+		select ( @i := @i + 1 ) AS RowNum,table_name,table_comment 
+		from information_schema.tables,
+		( SELECT @i := 0 ) AS it 
+		where table_schema = 'WTL_SAAS'
+		<if test="null != _parameter and '' != _parameter ">
+			and table_comment like CONCAT('%', #{tablename}, '%')
+		</if>
+		order by table_name asc
+	</select>
+	
+	<select id="findTableDtlInfo" parameterType="string" resultType="map">
+		select ( @i := @i + 1 ) AS RowNum,column_name,column_comment,data_type 
+		from information_schema.COLUMNS,
+		( SELECT @i := 0 ) AS it 
+		where table_schema = 'WTL_SAAS'
+		and table_name = #{tablename}
+	</select>
+	
+</mapper>

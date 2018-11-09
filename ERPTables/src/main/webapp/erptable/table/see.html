@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>ERP管理系统</title>
+    <meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0">
+    <!-- 设置字符编码集为国际编码 -->
+    <meta charset="utf-8">
+    <!-- IE兼容模式 通知 IE 采用其所支持的最新的模式 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <!-- 360,qq浏览器等多核浏览器，优先采用webkit -->
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="keywords" content="ERP管理系统">
+    <meta http-equiv="description" content="ERP管理系统">
+    <!-- 引入插件 -->
+    <script src="../lib/jquery/jquery-1.11.3.min.js"></script>
+    <link href="../lib/layui/css/layui.css" rel="stylesheet">
+    <script src="../lib/layui/layui.js"></script>
+    <!-- 引入自定义 -->
+    <link rel="stylesheet" href="index.css" />
+    <script src="json.js"></script>
+</head>
+
+<body>
+    <table class="layui-hide" id="test" lay-filter="test"></table>
+    <script type="text/html" id="toolbarDemo">
+        <div class="layui-btn-container">
+            <input type="text" class='searchInput' placeholder="描述内容">
+            <button class="layui-btn layui-btn-sm" lay-event="searchBtn">搜索</button>
+        </div>
+    </script>
+</body>
+</html>
+<script>
+    var page = {
+        params: {
+            searchvalue: '',
+            tablename: sessionStorage.getItem('id')
+        },
+        init: function () {
+            page.ajaxTable();
+        },
+        ajaxTable: function () {
+            //page.domTable(json.obj);
+            $.ajax({
+                 type: "POST",
+                 url: 'http://192.168.1.126:233/ERPTables/tableInfoDtl',
+                 data: page.params,
+                 error: function () {
+                     page.layerAlert("服务器异常", 2, function () {
+                         layer.closeAll();
+                     });
+                 },
+                 success: function (data) {
+                     if (data.success) {
+                         page.domTable(data.obj);
+                     } else {
+                         layerAlert(data.msg, 5, function () {
+                             layer.closeAll();
+                         });
+                     }
+                 },
+             });
+        },
+        domTable: function (data) {
+            var height = $(document).height() - 50;
+            layui.use('table', function () {
+                var table = layui.table;
+                table.render({
+                    elem: '#test',
+                    data: data,
+                    height: height,
+                    limit: 20,
+                    toolbar: '#toolbarDemo',
+                    cols: [
+                        [{
+                            type: 'checkbox',
+                            fixed: 'left'
+                        }, {
+                            field: 'RowNum',
+                            title: '序号',
+                            width: 60,
+                        }, {
+                            field: 'column_name',
+                            title: '字段名',
+                            width: 400,
+                        },{
+                            field: 'data_type',
+                            title: '字段类型',
+                            width: 120,
+                        }, {
+                            field: 'column_comment',
+                            title: '描述',
+                        }]
+                    ],
+                    page: true
+                });
+                //头工具栏事件
+                table.on('toolbar(test)', function (obj) {
+                    if (obj.event === 'searchBtn') {
+                        page.params.searchvalue=$('.searchInput').val();
+                        console.log(page.params);
+                        page.ajaxTable();
+                    }
+                });
+            });
+        },
+        layerAlert: function (msg, icon, callback) {
+            layui.use('layer', function () {
+                var layer = layui.layer;
+                layer.alert(msg, {
+                    icon: icon,
+                    skin: 'layui-layer-lan',
+                    closeBtn: 0,
+                    anim: 1
+                }, function () {
+                    callback();
+                });
+            });
+        },
+    };
+    $(document).ready(function () {
+        page.init();
+    });
+</script>

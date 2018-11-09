@@ -1,0 +1,39 @@
+body {
+    padding: 10px;
+    background-color: #ebebeb;
+}
+
+.layui-btn-container {
+    position: relative;
+}
+
+.searchInput {
+    z-index: 9999;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 300px;
+    height: 30px;
+    border-radius: 5px;
+    padding-left: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.layui-btn-container .layui-btn {
+    margin-left: 310px;
+}
+
+/* 修改layui table样式 */
+.layui-table-cell .layui-form-checkbox[lay-skin=primary],
+.layui-table-cell .layui-form-radio[lay-skin=primary] {
+    top: 5px !important;
+}
+
+.layui-btn-xs {
+    margin-top: 4px;
+}
+
+.layui-table-hover {
+    background-color: #aad8ec !important;
+}
